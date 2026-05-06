@@ -1,0 +1,19 @@
+# Visual Studio hidden folders
+.vs/
+
+# Build outputs
+[Bb]in/
+[Oo]bj/
+
+# Node modules (Frontend)
+node_modules/
+dist/
+build/
+
+# User-specific files
+*.user
+*.userosscache
+*.sln.docuser
+
+# Sensitivity data
+appsettings.Development.json
