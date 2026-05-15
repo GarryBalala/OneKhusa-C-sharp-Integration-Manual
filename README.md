@@ -7,7 +7,7 @@
 
 ## 🏗️ Architecture Overview: Abstract Factory Pattern
 
-This project implements the **Abstract Factory Pattern** to manage the creation of payment-related objects and services. The pattern ensures loose coupling, maintainability, and extensibility across the payment ecosystem.
+This project implements the **Abstract Factory Pattern** to manage the creation of payment-related objects and services. The pattern ensures loose coupling, maintainability, and extensibility across the entire payment ecosystem.
 
 ### Factory Hierarchy
 
@@ -34,33 +34,244 @@ This project implements the **Abstract Factory Pattern** to manage the creation 
 
 ---
 
-## 📁 Project Structure & Factory Mapping
+## 📁 Actual Project Structure & Folder Organization
 
 ### Root Level Structure
 
 ```
-OneTicket-Ecosystem/
-├── OneTicket.API/                  # ASP.NET Core Backend (Factory Implementation Layer)
-│   ├── Controllers/                # Abstract Controllers → Concrete Implementations
-│   ├── DTOs/                       # Data Transfer Objects (Factory Products)
-│   ├── Services/                   # Concrete Factories & Business Logic
-│   ├── Program.cs                  # Factory Registration & DI Container
-│   ├── appsettings.json            # Factory Configuration
-│   └── OneTicket.API.csproj        # Project Manifest
+OneKhusa-C-sharp-Integration-Manual/
+├── OneTicket.API/                      # ASP.NET Core Backend
+│   ├── Controllers/                    # API Endpoints (Collections, Payouts, Webhooks)
+│   ├── DTOs/                           # Data Transfer Objects
+│   │   ├── Collections/                # Collection request/response DTOs
+│   │   ├── Payouts/                    # Payout request/response DTOs
+│   │   └── Webhooks/                   # Webhook event DTOs
+│   ├── Services/                       # Business Logic Layer (to be created)
+│   │   ├── Factories/                  # Factory implementations (to create)
+│   │   ├── Handlers/                   # Request/Response handlers (to create)
+│   │   ├── Builders/                   # Request builders (to create)
+│   │   ├── Parsers/                    # Event parsers (to create)
+│   │   └── TicketTracker.cs            # In-memory state management (to create)
+│   ├── Properties/                     # Project properties
+│   ├── Program.cs                      # DI Container & Factory Registration
+│   ├── appsettings.json                # Configuration & API Keys
+│   ├── OneTicket.API.csproj            # Project manifest
+│   ├── OneTicket.API.http              # REST Client tests
+│   └── wwwroot/                        # Static files (optional)
 │
-├── OneTicket.UI/                   # React Frontend (Client-Side Factory)
+├── OneTicket.UI/                       # React Frontend (Vite)
 │   ├── src/
-│   │   ├── components/             # UI Components (Factories for UI elements)
-│   │   ├── services/               # API Service Factory
-│   │   ├── App.jsx                 # Main Factory Orchestrator
-│   │   └── main.jsx                # React Entry Point
-│   ├── public/                     # Static Assets
-│   ├── package.json                # Dependencies
-│   └── vite.config.js              # Build Configuration
+│   │   ├── components/                 # React Components
+│   │   ├── services/                   # API Service Factory (to create)
+│   │   ├── pages/                      # Page components (to create)
+│   │   ├── App.jsx                     # Main component
+│   │   ├── main.jsx                    # React entry point
+│   │   └── styles/                     # Global styles (optional)
+│   ├── public/                         # Static assets
+│   ├── package.json                    # NPM dependencies
+│   ├── package-lock.json               # Dependency lock file
+│   ├── vite.config.js                  # Vite build config
+│   ├── tailwind.config.js              # Tailwind CSS config
+│   ├── postcss.config.js               # PostCSS config
+│   ├── eslint.config.js                # ESLint config
+│   ├── index.html                      # HTML entry point
+│   └── .gitignore                      # Git ignore rules
 │
-├── ABSTRACT_FACTORY_GUIDE.md       # Detailed Pattern Documentation
-├── C#__Onekhusa_Integration_Manual.pdf # Integration Reference
-└── OneTicket-Ecosystem.slnx        # Solution Configuration
+├── README.md                           # This file
+├── ABSTRACT_FACTORY_GUIDE.md           # Detailed pattern documentation
+├── C#__Onekhusa_Integration_Manual.pdf # Official OneKhusa documentation
+├── OneTicket-Ecosystem.slnx            # Visual Studio solution file
+└── .gitignore                          # Root .gitignore
+```
+
+---
+
+## ⚙️ Setup & Installation (START HERE!)
+
+### Prerequisites
+
+Before you begin, ensure you have:
+
+- **.NET 8.0 SDK** - [Download here](https://dotnet.microsoft.com/download)
+- **Node.js 18+** - [Download here](https://nodejs.org/)
+- **Visual Studio 2022** or **VS Code** with C# extension
+- **Ngrok** (for local webhook testing)
+- **OneKhusa Account** with API credentials
+
+### 1️⃣ Backend Setup (ASP.NET Core API)
+
+#### Step 1: Navigate to Backend Directory
+
+```bash
+cd OneTicket.API
+```
+
+#### Step 2: Restore NuGet Packages
+
+```bash
+dotnet restore
+```
+
+#### Step 3: Update Configuration
+
+Edit `appsettings.json` and add your OneKhusa API credentials:
+
+```json
+{
+  "OneKhusa": {
+    "OrganizationId": "YOUR_ORG_ID",
+    "MerchantAccountNumber": 79619974,
+    "ApiKey": "YOUR_API_KEY",
+    "ApiSecret": "YOUR_API_SECRET"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning"
+    }
+  }
+}
+```
+
+**Where to find these credentials:**
+- Log into **OneKhusa Merchant Portal**
+- Navigate to **Settings → API Keys**
+- Copy your **API Key** and **API Secret**
+
+#### Step 4: Build the Project
+
+```bash
+dotnet build
+```
+
+Expected output: `Build succeeded`
+
+#### Step 5: Run the API
+
+```bash
+dotnet run
+```
+
+Expected output:
+```
+Building...
+info: Microsoft.AspNetCore.Hosting.Diagnostics
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime
+      Now listening on: http://localhost:5005
+```
+
+✅ **Backend is running at:** `http://localhost:5005`
+
+---
+
+### 2️⃣ Frontend Setup (React with Vite)
+
+#### Step 1: Navigate to Frontend Directory
+
+```bash
+cd ../OneTicket.UI
+```
+
+#### Step 2: Install Dependencies
+
+```bash
+npm install
+```
+
+Expected output: `added X packages`
+
+#### Step 3: Configure Backend URL
+
+Create a `.env` file (or update if exists):
+
+```env
+VITE_API_BASE_URL=http://localhost:5005/api
+```
+
+Or edit `src/services/api.js` with:
+
+```javascript
+const API_BASE_URL = 'http://localhost:5005/api';
+```
+
+#### Step 4: Run Development Server
+
+```bash
+npm run dev
+```
+
+Expected output:
+```
+  VITE v5.0.0  ready in XXX ms
+  ➜  Local:   http://localhost:5173/
+  ➜  press h to show help
+```
+
+✅ **Frontend is running at:** `http://localhost:5173`
+
+---
+
+### 3️⃣ Webhook Testing with Ngrok
+
+#### Step 1: Install Ngrok
+
+```bash
+# macOS (using Homebrew)
+brew install ngrok
+
+# Windows (using Chocolatey)
+choco install ngrok
+
+# Or download from: https://ngrok.com/download
+```
+
+#### Step 2: Authenticate Ngrok (One-time)
+
+```bash
+ngrok config add-authtoken YOUR_NGROK_TOKEN
+```
+
+Get your token from: https://dashboard.ngrok.com/auth
+
+#### Step 3: Start Ngrok Tunnel
+
+```bash
+ngrok http 5005
+```
+
+Expected output:
+```
+Forwarding                    https://abc123def456.ngrok-free.dev -> http://localhost:5005
+```
+
+Copy your **Ngrok URL** (e.g., `https://abc123def456.ngrok-free.dev`)
+
+#### Step 4: Update Webhook URL in OneKhusa Portal
+
+1. Log into **OneKhusa Merchant Portal**
+2. Go to **Settings → Webhook Configuration**
+3. Set **Webhook URL** to:
+   ```
+   https://your-ngrok-url.ngrok-free.dev/api/webhooks/handle
+   ```
+4. Save
+
+---
+
+## ✅ Quick Verification Checklist
+
+After completing all three installations:
+
+```bash
+# ✓ Backend running
+curl http://localhost:5005/health
+
+# ✓ Frontend accessible
+open http://localhost:5173
+
+# ✓ Ngrok tunnel active
+curl https://your-ngrok-url.ngrok-free.dev/health
 ```
 
 ---
@@ -69,7 +280,9 @@ OneTicket-Ecosystem/
 
 ### 1. **Core Factory Interface (Abstract Layer)**
 
-The pattern is built on abstract factory interfaces that define contracts for creating families of related objects:
+The pattern is built on an abstract factory interface that defines contracts for creating families of related objects.
+
+Create: `OneTicket.API/Services/Factories/IPaymentEcosystemFactory.cs`
 
 ```csharp
 // IPaymentEcosystemFactory.cs - Abstract Factory Contract
@@ -92,275 +305,115 @@ public interface IPaymentEcosystemFactory
 }
 ```
 
-### 2. **Concrete Factories (Implementation Layer)**
+### 2. **Main Factory Implementation**
 
-#### **Collections Factory** - Handles Payment Collection
-```
-Location: OneTicket.API/Services/Factories/CollectionsPaymentFactory.cs
-
-Products Created:
-├─ CollectionsRequestBuilder      → Initiates hosted checkout sessions
-├─ CollectionsPaymentHandler      → Processes payment logic
-└─ CollectionsResponseProcessor   → Handles OneKhusa API responses
-```
-
-#### **Payouts Factory** - Handles Disbursements
-```
-Location: OneTicket.API/Services/Factories/PayoutsFactory.cs
-
-Products Created:
-├─ SinglePayoutBuilder            → Single transfer requests
-├─ BatchPayoutBuilder             → Batch file processing (.csv, .xlsx)
-└─ PayoutHandler                  → Executes fund transfers
-```
-
-#### **Webhook Factory** - Handles Asynchronous Events
-```
-Location: OneTicket.API/Services/Factories/WebhookFactory.cs
-
-Products Created:
-├─ WebhookEventParser             → Parses incoming webhook events
-├─ WebhookHandler                 → Routes events to handlers
-└─ NotificationService            → Sends back to OneKhusa API
-```
-
-### 3. **Data Transfer Objects (Factory Products)**
-
-Located in: `OneTicket.API/DTOs/`
-
-```
-DTOs/
-├─ Collections/
-│  ├─ InitiateCollectionRequest.cs      # DTO for session initiation
-│  ├─ CollectionResponse.cs              # Response wrapper
-│  └─ PaymentRedirectModel.cs            # Redirection data
-│
-├─ Payouts/
-│  ├─ SinglePayoutRequest.cs             # Single transfer DTO
-│  ├─ BatchPayoutRequest.cs              # Batch upload DTO
-│  └─ PayoutResponse.cs                  # Payout result wrapper
-│
-└─ Webhooks/
-   ├─ OneKhusaWebhook.cs                 # Webhook payload model
-   ├─ WebhookEventModel.cs               # Event envelope
-   └─ CallbackResponse.cs                # Callback envelope
-```
-
-### 4. **Controllers (Factory Consumers)**
-
-Located in: `OneTicket.API/Controllers/`
-
-Each controller depends on factories injected via Dependency Injection:
+Create: `OneTicket.API/Services/Factories/OneKhusaPaymentEcosystemFactory.cs`
 
 ```csharp
-// TicketsController.cs - Collections Controller
-public class TicketsController : ControllerBase
+// OneKhusaPaymentEcosystemFactory.cs - Concrete Factory
+public class OneKhusaPaymentEcosystemFactory : IPaymentEcosystemFactory
 {
-    private readonly IPaymentEcosystemFactory _factory;
+    private readonly IConfiguration _configuration;
+    private readonly HttpClient _httpClient;
 
-    [HttpPost("initiate")]
-    public async Task<IActionResult> InitiatePayment(InitiateCollectionRequest request)
+    public OneKhusaPaymentEcosystemFactory(IConfiguration configuration, HttpClient httpClient)
     {
-        // Factory creates payment handler
-        var handler = _factory.CreateCollectionsPaymentHandler();
-        return Ok(await handler.ProcessAsync(request));
+        _configuration = configuration;
+        _httpClient = httpClient;
     }
-}
 
-// PayoutsController.cs - Disbursements Controller
-public class PayoutsController : ControllerBase
-{
-    private readonly IPaymentEcosystemFactory _factory;
+    // Collections Products
+    public ICollectionsRequestBuilder CreateCollectionsRequest() 
+        => new CollectionsRequestBuilder(_configuration);
 
-    [HttpPost("single")]
-    public async Task<IActionResult> SinglePayout(SinglePayoutRequest request)
-    {
-        // Factory creates payout builder & handler
-        var builder = _factory.CreateSinglePayoutBuilder();
-        var handler = _factory.CreatePayoutHandler();
-        return Ok(await handler.ProcessAsync(builder.Build(request)));
-    }
-}
+    public IPaymentHandler CreateCollectionsPaymentHandler() 
+        => new CollectionsPaymentHandler(_httpClient, _configuration);
 
-// WebhooksController.cs - Webhook Consumer
-public class WebhooksController : ControllerBase
-{
-    private readonly IPaymentEcosystemFactory _factory;
+    public IResponseProcessor CreateResponseProcessor() 
+        => new CollectionsResponseProcessor();
 
-    [HttpPost("webhook")]
-    public async Task<IActionResult> HandleWebhook([FromBody] OneKhusaWebhook webhook)
-    {
-        // Factory creates event parser & handler
-        var parser = _factory.CreateEventParser();
-        var handler = _factory.CreateWebhookHandler();
-        return Ok(await handler.ProcessAsync(parser.Parse(webhook)));
-    }
+    // Payouts Products
+    public ISinglePayoutBuilder CreateSinglePayoutRequest() 
+        => new SinglePayoutBuilder();
+
+    public IBatchPayoutBuilder CreateBatchPayoutRequest() 
+        => new BatchPayoutBuilder();
+
+    public IPayoutHandler CreatePayoutHandler() 
+        => new PayoutHandler(_httpClient, _configuration);
+
+    // Webhook Products
+    public IWebhookEventParser CreateEventParser() 
+        => new WebhookEventParser();
+
+    public IWebhookHandler CreateWebhookHandler() 
+        => new WebhookHandler();
+
+    public INotificationService CreateNotificationService() 
+        => new NotificationService(_httpClient, _configuration);
 }
 ```
 
-### 5. **Service Layer (Factory Implementation)**
+### 3. **Service Layer Structure**
 
-Located in: `OneTicket.API/Services/`
+Your `OneTicket.API/Services/` directory should contain:
 
 ```
 Services/
-├─ Factories/
-│  ├─ OneKhusaPaymentEcosystemFactory.cs    # Main factory implementation
-│  ├─ CollectionsPaymentFactory.cs          # Collections products
-│  ├─ PayoutsFactory.cs                     # Payout products
-│  └─ WebhookFactory.cs                     # Webhook products
+├── Factories/
+│   ├── IPaymentEcosystemFactory.cs         # Abstract interface
+│   ├── OneKhusaPaymentEcosystemFactory.cs  # Main factory
+│   ├── ICollectionsRequestBuilder.cs       # Collections builder interface
+│   ├── ISinglePayoutBuilder.cs             # Single payout builder interface
+│   ├── IBatchPayoutBuilder.cs              # Batch payout builder interface
+│   ├── IPaymentHandler.cs                  # Handler interface
+│   ├── IResponseProcessor.cs               # Response processor interface
+│   ├── IWebhookEventParser.cs              # Parser interface
+│   ├── IWebhookHandler.cs                  # Webhook handler interface
+│   └── INotificationService.cs             # Notification interface
 │
-├─ Handlers/
-│  ├─ CollectionsPaymentHandler.cs          # Collections business logic
-│  ├─ PayoutHandler.cs                      # Payout business logic
-│  └─ WebhookHandler.cs                     # Webhook processing
+├── Handlers/
+│   ├── CollectionsPaymentHandler.cs        # Collections business logic
+│   ├── PayoutHandler.cs                    # Payout business logic
+│   └── WebhookHandler.cs                   # Webhook processing
 │
-├─ Builders/
-│  ├─ CollectionsRequestBuilder.cs          # Request construction
-│  ├─ SinglePayoutBuilder.cs                # Single payout construction
-│  └─ BatchPayoutBuilder.cs                 # Batch processing
+├── Builders/
+│   ├── CollectionsRequestBuilder.cs        # Request construction
+│   ├── SinglePayoutBuilder.cs              # Single payout construction
+│   └── BatchPayoutBuilder.cs               # Batch processing
 │
-├─ Parsers/
-│  └─ WebhookEventParser.cs                 # Webhook event parsing
+├── Parsers/
+│   └── WebhookEventParser.cs               # Webhook event parsing
 │
-├─ Processors/
-│  ├─ CollectionsResponseProcessor.cs       # Response handling
-│  └─ NotificationService.cs                # OneKhusa notifications
+├── Processors/
+│   ├── CollectionsResponseProcessor.cs     # Response handling
+│   └── NotificationService.cs              # OneKhusa notifications
 │
-└─ TicketTracker.cs                         # In-Memory State Management
+└── TicketTracker.cs                        # In-Memory State Management
 ```
 
----
+### 4. **Register Factory in Program.cs**
 
-## ⚡ Quick Developer Reference (Webhooks & Handshaking)
-
-### 1. **Webhook Endpoint (Your API)**
-
-This is the URL configured in the **OneKhusa Merchant Portal**:
-
-- **Sample URL:** `https://your-tunnel-name.ngrok-free.dev/wc-api/onekhusa_webhook`
-- **HTTP Method:** `POST`
-- **Controller:** `WebhooksController.cs`
-- **Factory Used:** `WebhookFactory`
-- **Expected Success Code:** `S100`
-
-**Request Flow:**
-```
-OneKhusa API
-    ↓ [POST webhook]
-WebhooksController
-    ↓ [Factory creates parser & handler]
-WebhookFactory (Creates EventParser + WebhookHandler)
-    ↓ [Processes event]
-TicketTracker / Database
-    ↓ [Updates payment status]
-NotificationService
-    ↓ [Sends callback to OneKhusa]
-OneKhusa API [Releases customer session]
-```
-
-### 2. **"Closing the Loop" Endpoint (OneKhusa API)**
-
-After your Webhook receives a success signal, your backend **must** notify this URL:
-
-- **URL:** `https://checkout.onekhusa.com/requestToPay/webhook`
-- **Payload:** `{ "paymentTransactionId": "...", "status": "SUCCESS" }`
-- **Handler:** `NotificationService` (Created by `WebhookFactory`)
-
-### 3. **Redirection URLs**
-
-These are the paths where OneKhusa redirects the user after payment:
-
-- **Success:** `http://localhost:5173/success`
-- **Failure:** `http://localhost:5173/failed`
-
----
-
-## 🚀 Key Features
-
-### 1. **Hosted Checkout (Collections)**
-- **Factory:** `CollectionsPaymentFactory`
-- **Pattern:** Three-Way Handshake
-  - 1️⃣ Session Initiation (Client → API)
-  - 2️⃣ User Redirection (API → OneKhusa Hosted Page)
-  - 3️⃣ Async Webhook Synchronization (OneKhusa → API → UI)
-- **Real-Time Updates:** `NotificationService` triggers UI refresh automatically
-
-### 2. **Standard Disbursements (Payouts)**
-- **Factory:** `PayoutsFactory`
-- **Single Payouts:** Immediate, real-time fund transfers via `SinglePayoutBuilder`
-- **Batch Processing:** High-volume transfers via `BatchPayoutBuilder` (.csv/.xlsx file upload)
-
-### 3. **Webhook Management**
-- **Factory:** `WebhookFactory`
-- **Event Parsing:** `WebhookEventParser` extracts payment status
-- **State Tracking:** `TicketTracker` maintains in-memory session state
-- **Notification Loop:** `NotificationService` completes the handshake
-
----
-
-## 🛠️ Tech Stack
-
-| Layer | Technology | Role |
-|-------|-----------|------|
-| **Backend Runtime** | ASP.NET Core 8.0 | Web API Host |
-| **Factory Container** | Microsoft.Extensions.DependencyInjection | Factory Registration & Lifetime |
-| **HTTP Client** | HttpClient | Direct API Handshaking with OneKhusa |
-| **Webhook Listener** | Ngrok | Local Tunnel for Testing |
-| **Frontend Framework** | React 18 (Vite) | UI Layer |
-| **Frontend Styling** | Tailwind CSS | Component Styling |
-| **Frontend Icons** | Lucide React | Icon Library |
-| **Payment SDK** | OneKhusa .NET SDK | Official Integration |
-
----
-
-## ⚙️ Setup & Installation
-
-### 1. **Backend Configuration**
-
-#### Step 1: Update `appsettings.json`
-
-```json
-{
-  "OneKhusa": {
-    "OrganizationId": "YOUR_ORG_ID",
-    "MerchantAccountNumber": 79619974,
-    "ApiKey": "YOUR_API_KEY",
-    "ApiSecret": "YOUR_API_SECRET"
-  },
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information"
-    }
-  }
-}
-```
-
-#### Step 2: Register Factories in `Program.cs`
+Update `OneTicket.API/Program.cs`:
 
 ```csharp
-// Program.cs - Factory Registration via DI Container
 var builder = WebApplication.CreateBuilder(args);
 
-// Register Abstract Factory Interface
+// Register Abstract Factory
 builder.Services.AddScoped<IPaymentEcosystemFactory, OneKhusaPaymentEcosystemFactory>();
-
-// Register Sub-Factories (Optional - for fine-grained control)
-builder.Services.AddScoped<CollectionsPaymentFactory>();
-builder.Services.AddScoped<PayoutsFactory>();
-builder.Services.AddScoped<WebhookFactory>();
 
 // Register Services
 builder.Services.AddScoped<TicketTracker>();
-builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddHttpClient();
+
+// Add CORS
+builder.Services.AddCors(options => options.AddPolicy("AllowReact",
+    b => b.WithOrigins("http://localhost:5173")
+          .AllowAnyMethod()
+          .AllowAnyHeader()
+));
 
 builder.Services.AddControllers();
-builder.Services.AddCors(options => options.AddPolicy("AllowReact",
-    builder => builder
-        .WithOrigins("http://localhost:5173")
-        .AllowAnyMethod()
-        .AllowAnyHeader()
-));
 
 var app = builder.Build();
 app.UseCors("AllowReact");
@@ -368,100 +421,47 @@ app.MapControllers();
 app.Run("http://localhost:5005");
 ```
 
-#### Step 3: Run the API
+---
 
-```bash
-cd OneTicket.API
-dotnet restore
-dotnet run
+## 🔄 Implementation Flow: Collections (Hosted Checkout)
+
+### How the Factory Pattern Works
+
 ```
-
-The API will start at: `http://localhost:5005`
-
-### 2. **Frontend Configuration**
-
-#### Step 1: Install Dependencies
-
-```bash
-cd OneTicket.UI
-npm install
+1. Client Request (React UI)
+   ↓
+2. TicketsController receives request
+   ↓
+3. Controller uses IPaymentEcosystemFactory to create products:
+   - CreateCollectionsRequest() → CollectionsRequestBuilder
+   - CreateCollectionsPaymentHandler() → CollectionsPaymentHandler
+   ↓
+4. Builder constructs the request payload
+   ↓
+5. Handler calls OneKhusa API with payload
+   ↓
+6. OneKhusa returns hosted checkout URL
+   ↓
+7. User redirected to OneKhusa payment page
+   ↓
+8. After payment, OneKhusa sends webhook to your endpoint
+   ↓
+9. WebhooksController uses factory to create:
+   - CreateEventParser() → WebhookEventParser
+   - CreateWebhookHandler() → WebhookHandler
+   ↓
+10. Parser extracts payment status
+    ↓
+11. Handler updates TicketTracker
+    ↓
+12. NotificationService notifies OneKhusa
+    ↓
+13. User is redirected to success/failed page
 ```
-
-#### Step 2: Configure API Service Factory
-
-Update `src/services/api.js` with your backend URL:
-
-```javascript
-// src/services/api.js - API Service Factory
-const API_BASE_URL = 'http://localhost:5005/api';
-
-export const apiServiceFactory = {
-  collections: {
-    initiate: (payload) => 
-      axios.post(`${API_BASE_URL}/tickets/initiate`, payload),
-    getStatus: (ticketId) =>
-      axios.get(`${API_BASE_URL}/tickets/${ticketId}/status`),
-  },
-  
-  payouts: {
-    single: (payload) =>
-      axios.post(`${API_BASE_URL}/payouts/single`, payload),
-    batch: (formData) =>
-      axios.post(`${API_BASE_URL}/payouts/batch`, formData),
-  }
-};
-```
-
-#### Step 3: Run Development Server
-
-```bash
-npm run dev
-```
-
-The UI will start at: `http://localhost:5173`
-
-### 3. **Webhook Testing with Ngrok**
-
-#### Step 1: Install & Start Ngrok
-
-```bash
-# Install ngrok (if not already installed)
-brew install ngrok  # macOS
-# or
-choco install ngrok # Windows
-
-# Start tunnel to your local API
-ngrok http 5005
-```
-
-This outputs:
-```
-Session Status                online
-Forwarding                    https://your-unique-code.ngrok-free.dev -> http://localhost:5005
-```
-
-#### Step 2: Update Webhook URL in Code
-
-In `OneTicket.API/Controllers/TicketsController.cs`, update the `callbackApiUrl`:
-
-```csharp
-var initRequest = new InitiateCollectionRequest
-{
-    Amount = request.Amount,
-    PhoneNumber = request.PhoneNumber,
-    // Update with your Ngrok URL
-    CallbackApiUrl = "https://your-unique-code.ngrok-free.dev/wc-api/onekhusa_webhook"
-};
-```
-
-#### Step 3: Update Merchant Portal
-
-Log into your **OneKhusa Merchant Portal** and set:
-- **Webhook URL:** `https://your-unique-code.ngrok-free.dev/wc-api/onekhusa_webhook`
 
 ---
 
-## 🔄 Payment Flow Diagram
+## 📊 Payment Flow Diagram
 
 ### Collections (Hosted Checkout) Flow
 
@@ -473,35 +473,35 @@ Log into your **OneKhusa Merchant Portal** and set:
       ▼
 ┌────────────────────────────────────────────────────┐
 │ React UI (OneTicket.UI)                            │
-│ Calls: apiServiceFactory.collections.initiate()  │
+│ POST /api/tickets/initiate                        │
 └─────┬──────────────────────────────────────────────┘
-      │ 2. POST /api/tickets/initiate
+      │
       ▼
 ┌────────────────────────────────────────────────────┐
 │ ASP.NET API (OneTicket.API)                        │
 │ TicketsController.InitiatePayment()               │
-│ Factory: CollectionsPaymentFactory                 │
+│ Factory creates: Builder + Handler                 │
 └─────┬──────────────────────────────────────────────┘
-      │ 3. Call OneKhusa Checkout API
+      │
       ▼
 ┌────────────────────────────────────────────────────┐
 │ OneKhusa Hosted Checkout Page                      │
-│ User enters phone number & completes payment      │
+│ User enters phone & completes payment             │
 └─────┬──────────────────────────────────────────────┘
-      │ 4. Payment success/failure
+      │
       ▼
 ┌────────────────────────────────────────────────────┐
 │ WebhooksController.HandleWebhook()                │
-│ Factory: WebhookFactory                            │
-│ Parses event & updates TicketTracker              │
+│ Factory creates: Parser + Handler                  │
+│ Updates TicketTracker                              │
 └─────┬──────────────────────────────────────────────┘
-      │ 5. POST /webhook (notify OneKhusa)
+      │
       ▼
 ┌────────────────────────────────────────────────────┐
-│ OneKhusa API                                       │
-│ Releases customer session                          │
-└────────────────────────────────────────────────────┘
-      │ 6. Redirect to success/failed page
+│ NotificationService (created by factory)          │
+│ POST to OneKhusa webhook endpoint                 │
+└─────┬──────────────────────────────────────────────┘
+      │
       ▼
 ┌────────────────────────────────────────────────────┐
 │ React UI Success/Failed Page                      │
@@ -509,99 +509,69 @@ Log into your **OneKhusa Merchant Portal** and set:
 └────────────────────────────────────────────────────┘
 ```
 
-### Payouts (Disbursements) Flow
+---
 
-```
-┌────────────┐
-│  Backend   │
-│  (Admin)   │
-└─────┬──────┘
-      │ 1. POST /api/payouts/single
-      ▼
-┌────────────────────────────────────────────────────┐
-│ PayoutsController.SinglePayout()                  │
-│ Factory: PayoutsFactory                            │
-│ Builder: SinglePayoutBuilder                       │
-└─────┬──────────────────────────────────────────────┘
-      │ 2. Execute transfer via OneKhusa API
-      ▼
-┌────────────────────────────────────────────────────┐
-│ OneKhusa API                                       │
-│ Processes fund transfer                            │
-└─────┬──────────────────────────────────────────────┘
-      │ 3. Return payout status
-      ▼
-┌────────────────────────────────────────────────────┐
-│ Backend receives confirmation                      │
-│ Updates database / logs transfer                  │
-└────────────────────────────────────────────────────┘
-```
+## 🛠️ Tech Stack
+
+| Layer | Technology | Role |
+|-------|-----------|------|
+| **Backend Runtime** | ASP.NET Core 8.0 | Web API Host |
+| **Factory Container** | Microsoft.Extensions.DependencyInjection | DI + Factory Registration |
+| **HTTP Client** | HttpClient | OneKhusa API calls |
+| **Webhook Tunnel** | Ngrok | Local testing |
+| **Frontend Framework** | React 18 (Vite) | UI Layer |
+| **Frontend Styling** | Tailwind CSS | Component Styling |
+| **Frontend Icons** | Lucide React | Icon Library |
+| **Payment SDK** | OneKhusa .NET SDK | Official Integration |
 
 ---
 
-## 📊 In-Memory State Management (TicketTracker)
+## 🚀 Key Features (To Implement)
 
-The `TicketTracker` service maintains temporary session state:
+### 1. **Hosted Checkout (Collections)**
+- **Factory:** `CollectionsPaymentFactory`
+- **Flow:** Session → Hosted Page → Webhook → Confirmation
+- **Handler:** `CollectionsPaymentHandler`
 
-```csharp
-// OneTicket.API/Services/TicketTracker.cs
-public class TicketTracker
-{
-    private static readonly Dictionary<string, PaymentSessionModel> _sessions = new();
+### 2. **Disbursements (Payouts)**
+- **Factory:** `PayoutsFactory`
+- **Single:** Real-time transfers
+- **Batch:** CSV/Excel file processing
 
-    public void CreateSession(string ticketId, PaymentSessionModel session)
-        => _sessions[ticketId] = session;
-
-    public PaymentSessionModel GetSession(string ticketId)
-        => _sessions.ContainsKey(ticketId) ? _sessions[ticketId] : null;
-
-    public void UpdateSessionStatus(string ticketId, string status)
-        => _sessions[ticketId].Status = status;
-}
-```
-
-**Note:** For production, replace with persistent storage (SQL Server, PostgreSQL, Redis).
+### 3. **Webhook Management**
+- **Factory:** `WebhookFactory`
+- **Parser:** Extracts events from OneKhusa
+- **Notifier:** Confirms receipt to OneKhusa
 
 ---
 
 ## 🧪 Testing the Integration
 
-### Test Collections (Hosted Checkout)
+### Test Endpoint Health
 
 ```bash
-# 1. Start both services
-# Terminal 1: Backend
-cd OneTicket.API && dotnet run
+# Backend health check
+curl http://localhost:5005/health
 
-# Terminal 2: Frontend
-cd OneTicket.UI && npm run dev
-
-# 2. Navigate to http://localhost:5173
-# 3. Click "Pay"
-# 4. Use test credentials from OneKhusa
+# Frontend is accessible
+open http://localhost:5173
 ```
 
-### Test Webhook Delivery
+### Test Collections Flow
 
-```bash
-# Use ngrok dashboard to inspect webhook calls
-# URL: http://localhost:4040
-
-# Or send manual test webhook:
-curl -X POST https://your-tunnel.ngrok-free.dev/wc-api/onekhusa_webhook \
-  -H "Content-Type: application/json" \
-  -d '{
-    "paymentTransactionId": "test-123",
-    "status": "SUCCESS",
-    "amount": 100
-  }'
-```
+1. Start backend: `dotnet run` (in `OneTicket.API`)
+2. Start frontend: `npm run dev` (in `OneTicket.UI`)
+3. Open http://localhost:5173
+4. Click "Pay" button
+5. Enter test phone number from OneKhusa docs
+6. Complete payment
+7. Check webhook logs in Ngrok dashboard: http://localhost:4040
 
 ---
 
 ## 📚 Additional Resources
 
-- **[ABSTRACT_FACTORY_GUIDE.md](./ABSTRACT_FACTORY_GUIDE.md)** - Deep dive into factory pattern implementation
+- **[ABSTRACT_FACTORY_GUIDE.md](./ABSTRACT_FACTORY_GUIDE.md)** - Deep dive into factory pattern
 - **[C# Integration Manual PDF](./C%23__Onekhusa_Integration_Manual.pdf)** - Official OneKhusa documentation
 - **[OneKhusa Developer Docs](https://developer.onekhusa.com)** - Official API reference
 
@@ -609,12 +579,12 @@ curl -X POST https://your-tunnel.ngrok-free.dev/wc-api/onekhusa_webhook \
 
 ## 🔐 Security Best Practices
 
-1. **Store Credentials:** Never hardcode API keys; use `appsettings.json` with user secrets
-2. **HTTPS Only:** Always use HTTPS in production
-3. **CORS Configuration:** Restrict to your frontend domain
-4. **Webhook Validation:** Verify webhook signatures from OneKhusa
-5. **Rate Limiting:** Implement rate limits on sensitive endpoints
-6. **Logging:** Log all payment transactions for audit trails
+1. **Never hardcode credentials** - Use `appsettings.json` + user secrets
+2. **HTTPS only in production** - HTTP only for local development
+3. **CORS restriction** - Only allow your frontend domain
+4. **Webhook validation** - Verify OneKhusa signatures
+5. **Rate limiting** - Protect sensitive endpoints
+6. **Logging** - Audit all payment transactions
 
 ---
 
@@ -626,10 +596,10 @@ This integration manual is provided for OneKhusa SDK implementation purposes.
 
 ## 🤝 Support
 
-For issues or questions:
-- Check [ABSTRACT_FACTORY_GUIDE.md](./ABSTRACT_FACTORY_GUIDE.md) for detailed implementation patterns
-- Review the PDF manual for OneKhusa API specifications
-- Contact OneKhusa support at [support@onekhusa.com](mailto:support@onekhusa.com)
+For issues:
+- Review [ABSTRACT_FACTORY_GUIDE.md](./ABSTRACT_FACTORY_GUIDE.md)
+- Check official [OneKhusa API docs](https://developer.onekhusa.com)
+- Contact support@onekhusa.com
 
 ---
 
