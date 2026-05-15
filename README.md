@@ -227,30 +227,9 @@ open http://localhost:5173
 
 ## 📚 Additional Resources
 
-- **[ABSTRACT_FACTORY_GUIDE.md](./ABSTRACT_FACTORY_GUIDE.md)** - Deep dive into factory pattern
 - **[C# Integration Manual PDF](./C%23__Onekhusa_Integration_Manual.pdf)** - Official OneKhusa documentation
 - **[OneKhusa Developer Docs](https://developer.onekhusa.com)** - Official API reference
 
 ---
 
-## 🔐 Security Best Practices
 
-1. **Never hardcode credentials** - Use `appsettings.json` + user secrets
-2. **HTTPS only in production** - HTTP only for local development
-3. **CORS restriction** - Only allow your frontend domain
-4. **Webhook validation** - Verify OneKhusa signatures
-5. **Rate limiting** - Protect sensitive endpoints
-6. **Logging** - Audit all payment transactions
-
----
-
-## 📝 License
-
-This integration manual is provided for OneKhusa SDK implementation purposes.
-
----
-
----
-
-**Last Updated:** May 2026  
-**Repository:** [GarryBalala/OneKhusa-C-sharp-Integration-Manual](https://github.com/GarryBalala/OneKhusa-C-sharp-Integration-Manual)
